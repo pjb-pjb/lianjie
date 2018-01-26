@@ -1,0 +1,71 @@
+class draw {
+	constructor(ctx,setUp){
+		this.ctx=ctx;
+		this.setUp=setUp;
+		this.radius=0;
+		this.type=setUp.type;
+		this.shape=setUp.shape;
+		this.ctx.strokeStyle=setUp.color;
+		this.ctx.fillStyle=setUp.color;
+		this.ctx.lineWidth=setUp.width;
+		this.s=setUp.size;
+	}
+	rect(x1,y1,x2,y2){
+		if(this.type=="fill"){
+			this.ctx.fillRect(x1,y1,x2-x1,y2-y1);
+		}
+		else{
+			this.ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+		}
+	}
+	line(x1,y1,x2,y2){
+		this.ctx.beginPath();
+		this.ctx.moveTo(x1,y1);
+		this.ctx.lineTo(x2,y2);
+		this.ctx.stroke();
+		this.ctx.closePath();
+	}
+	round(x1,y1,x2,y2){
+//		this.radius=Math.sqrt((x2-x1)**2+(y2-y1)**2);
+		this.radius=Math.abs(x2-x1)>Math.abs(y2-y1)?Math.abs((y2-y1)/2):Math.abs((x2-x1)/2);
+		this.x=x1>x2?x1-this.radius:this.radius+x1;
+		this.y=y1>y2?y1-this.radius:this.radius+y1;
+		this.ctx.beginPath();
+		this.ctx.arc(this.x,this.y,this.radius,0,2*Math.PI);
+		this.ctx[this.type]();
+		this.ctx.closePath();
+	}
+	polygon(x1,y1,x2,y2){
+		this.ctx.save();
+		this.ctx.translate(x1,y1);
+		this.ctx.rotate(Math.atan((y2-y1)/(x2-x1)));
+		this.ctx.beginPath();
+		let r=Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2));
+		let x=Math.cos(2*Math.PI/(this.s*2))*r;
+		let y=Math.sin(2*Math.PI/(this.s*2))*r;
+		this.ctx.moveTo(x,-y);
+		this.ctx.lineTo(x,y);
+		for(let i=0;i<this.s;i++){
+			this.ctx.rotate(2*Math.PI/this.s);
+			this.ctx.lineTo(x,y);
+		}
+		this.ctx[this.type]();
+		this.ctx.closePath();
+		this.ctx.restore();
+	}
+	drawPen(x1,y1,x2,y2,x3,y3){
+		this.ctx.save();
+		this.ctx.lineCap="round";
+		this.ctx.beginPath();
+		this.ctx.moveTo(x3,y3);
+		this.ctx.lineTo(x2,y2);
+		this.ctx.stroke();
+		this.ctx.closePath();
+		y1=y2;
+		x1=x2;
+		this.ctx.restore();
+	}
+	rubber(x1,y1,x2,y2){
+		this.ctx.clearRect(x2-this.setUp.width,y2-this.setUp.width,this.setUp.width,this.setUp.width);
+	}
+}

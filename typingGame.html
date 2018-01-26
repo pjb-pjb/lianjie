@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-style: normal;
+			-webkit-user-select: none;
+		}
+		.meu{
+			padding: 0 20px;
+			position: fixed;
+			top: 0;
+			width: 1000px;
+			height: 30px;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			display: flex;
+			justify-content: space-between;
+			line-height: 30px;
+			color: white;
+			font-size: 16px;
+			z-index: 999;
+			background:#000111;
+		}
+		html,body{
+			width: 100%;
+			height: 100%;	
+			overflow: hidden;
+			background: #082d8a;
+		}
+		.cj{
+			border-radius: 10px;
+			width: 1000px;
+			height: 100%;
+			margin: 0 auto;
+			position: relative;
+			background: url(img/bj.jpg) no-repeat center center;
+			background-size: 100% 100%;
+			box-shadow: 0 0 10px 10px #000;
+		}
+		.ks,.js{
+			width: 300px;
+			height: 300px;
+			/*background: ;*/
+			position: fixed;
+			left: calc(50% - 150px);
+			top: calc(50% - 150px);
+			box-sizing: border-box;
+			border-radius: 80px;
+			/*border:10px solid gainsboro;*/
+		}
+		.ks{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.ks span{
+			-webkit-user-select: none;
+			display: block;
+			width: 250px;
+			height: 100px;
+			text-align: center;
+			line-height: 100px;
+			background: url(img/kaishi.png) no-repeat center center;
+			background-size: 100% 100%;
+			color: white;
+			font-weight: 700;
+			cursor: pointer;
+			font-size: 24px;
+			font-family:"新宋体";
+			letter-spacing: 5px;
+		}
+		.js{
+			overflow: hidden;
+			display: none;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background: url(img/jieshu.png) no-repeat center center;
+			background-size: 150% 150%;
+		}
+		.cj .zm{
+			border: 1px solid salmon;
+			background: #fff;
+			width: 80px;
+			height: 80px;
+			position:absolute;
+			color: #000;
+			font-size: 26px;
+			font-weight: bold;
+			line-height: 80px;
+			text-align: center;
+			border-radius: 50%;
+		}
+		#df,#gk,#sm{
+			color: green;
+		}
+		.endnum{
+			margin-top: 20px;
+			color: black;
+			font-size: 20px;
+			font-weight: bold;
+			cursor:default;
+			-webkit-user-select: none;
+		}
+		.js .btn{
+			overflow: hidden;
+			display: flex;
+		}
+		.js .btn span{
+			-webkit-user-select: none;
+			cursor:pointer;
+			border-radius: 20px;
+			display: block;
+			width: 70px;
+			height: 30px;
+			margin-right: 10px;
+			text-align: center;
+			background: green;
+			color: #fff;
+			font-size: 16px;
+			line-height: 30px;
+			margin-top: 10px;
+			font-weight: bold;
+			box-shadow: 0 0 5px 1px rgba(0,0,0,0.5);
+			font-family: gadget;
+			letter-spacing: 3px;
+		}
+		.js .btn span:last-child{
+			margin-right: 0;
+		}
+		.js p{
+			margin-top: 20px;
+			color: #000;
+		}
+	</style>
+	<body>
+		<div class="meu">
+			<div class="gk">
+				<span>关卡：</span><span id="gk">1</span>
+			</div>
+			<div class="sm">
+				<span>生命：</span><span id="sm">5</span>
+			</div>
+			<div class="df">
+				<span>得分：</span><span id="df">0</span>
+			</div>
+		</div>
+		<div class="cj"></div>
+		<div class="ks">
+			<span>开始游戏</span>
+		</div>
+		<div class="js">
+			<div class="endnum"><span>历史最高：</span><i id="allHig"></i></span></div>
+			<div class="endnum"><span>最终得分：</span><i id="endnum"></i></span></div>
+			<p>继续努力吧！</p>
+			<div class="btn"><span id="jx">继续</span><span id="tc">退出</span></div>
+		</div>
+		<audio src="img/舒喆 - 绿柚子.mp3" id="ksmusic" loop></audio>
+		<audio src="img/jieshu.mp3" id="jsmusic"></audio>
+		<audio src="img/jumpp.mp3" id="dfmusic"></audio>
+	</body>
+	<script>
+		class name{
+			constructor() {
+				this.ksmusic=document.querySelector("#ksmusic");
+				this.jsmusic=document.querySelector("#jsmusic");
+				this.dfmusic=document.querySelector("#dfmusic");
+				this.cj=document.querySelector(".cj");
+				this.ks=document.querySelector(".ks");
+				this.ksbtn=document.querySelector(".ks span");
+				this.dfnum=document.querySelector("#df");
+				this.gknum=document.querySelector("#gk");
+				this.smnum=document.querySelector("#sm");
+				this.js=document.querySelector(".js");
+				this.endNUm=document.querySelector("#endnum");
+				this.allHig=document.querySelector("#allHig");
+				this.jx=document.querySelector("#jx");
+				this.tc=document.querySelector("#tc");
+				this.p=document.querySelector(".js p");
+				this.chushihua();
+				this.obj={};
+				this.n=3;
+				this.sudu=5;
+				this.df=0;
+				this.gk=1;
+				this.sm=5;
+				this.flag=true;
+				this.flag2=0;
+			}
+			getData(){
+				return localStorage.score?parseInt(localStorage.score):0;
+			}
+			saveData(data){
+				localStorage.score=data;
+			}
+			chushihua(){
+				this.play();
+				this.keydown(this);
+			}
+			start(){
+				this.ksmusic.play();
+				this.flag2=1;
+				this.ks.style.display="none";
+				if(this.flag){
+					for(let i=0;i<this.n;i++){
+						this.creatLetter();
+					}
+					this.flag=!this.flag;
+				}
+				this.move();
+			}
+			continue(){
+				this.ksmusic.play();
+				this.obj={};
+				this.cj.innerHTML="";
+				this.js.style.display="none";
+				this.gknum.innerHTML=1;
+				this.smnum.innerHTML=5;
+				this.dfnum.innerHTML=0;
+				this.sudu=5;
+				this.df=0;
+				this.gk=1;
+				this.sm=5;
+				this.flag=true;
+				this.flag2=0;
+				this.flag3=0;
+				this.start();
+			}
+			play(){
+				this.ksbtn.onclick=()=>{
+					this.start();
+				}
+			}
+			choice(){
+				this.jx.onclick=()=>{
+					this.continue();
+				}
+				this.tc.onclick=function(){
+					this.tuichu();
+				}.bind(this)
+			}
+			tuichu(){
+				if(confirm("你确定要退出？")){
+					location.reload();
+				}
+			}
+			creatLetter(){
+				let newdiv=document.createElement("div");
+				let num,letter,randomLeft,randomTop;
+				newdiv.classList.add("zm");
+				do{
+					num=Math.floor(Math.random()*26+65);
+					letter=String.fromCharCode(num);
+				}while(this.obj[letter]);
+				do{
+					randomLeft=Math.random()*920;
+					randomTop=-(Math.random()*200);
+				}while(this.checkPos(randomLeft))
+				newdiv.innerHTML=letter;
+				newdiv.style.left=randomLeft+"px";
+				newdiv.style.top=randomTop+"px";
+				this.cj.appendChild(newdiv);
+				this.obj[letter]={randomLeft,randomTop,ele:newdiv};
+			}
+			checkPos(randomLeft){
+				for(let i in this.obj){
+					if(randomLeft-this.obj[i].randomLeft>-100&&randomLeft-this.obj[i].randomLeft<100){
+						return true;
+					}
+				}
+			}
+			move(){
+				this.time=setInterval(function(){
+					for(let i in this.obj){
+						let top=this.obj[i].randomTop;
+						top+=this.sudu;
+						if(top>window.innerHeight){
+							this.sm--;
+							this.smnum.innerHTML=this.sm;
+							this.creatLetter();
+							if(this.sm<=0){
+								this.ksmusic.pause();
+								this.jsmusic.play();
+								clearInterval(this.time);
+								this.allHig.innerHTML=this.getData();
+								if(this.df>this.getData()){
+									this.p.style.color="red";
+									this.p.innerHTML="恭喜你,历史最高得分！";
+									this.saveData(this.df);
+								}else{
+									this.p.style.color="";
+									this.p.innerHTML="继续努力吧！";
+									this.allHig.innerHTML=this.getData();
+								}
+								this.endNUm.innerHTML=this.df;
+								this.flag=true;
+								this.flag3=1;
+								this.js.style.display="flex";
+								this.choice();
+							}
+							this.cj.removeChild(this.obj[i].ele);
+							delete this.obj[i];
+							return;
+						}
+						this.obj[i].randomTop=top;
+						this.obj[i].ele.style.top=top+"px";
+					}
+				}.bind(this),30);
+			}
+			keydown(that){
+				let flag1=true;
+				window.onkeydown=function(event){
+					let letter=String.fromCharCode(event.keyCode); 
+					if(event.keyCode==27){
+						that.tuichu();
+					}
+					if(that.flag3==1&&event.keyCode==32){
+						that.flag3=0;
+						that.continue();
+						return;
+					}
+					if(!that.flag){
+						if(event.keyCode===32){
+							if(flag1){
+								this.ksmusic.pause();
+								that.ks.style.display="flex";
+								that.ksbtn.innerHTML="点击继续";
+								clearInterval(that.time);
+							}
+							else{
+								this.ksmusic.play();
+								that.ks.style.display="none";
+								that.move();
+							}
+							flag1=!flag1;
+						}
+						if(!flag1){
+							return;
+						}
+					}
+					if(that.flag2==0&&event.keyCode==32){
+ 						that.ksbtn.onclick();
+						that.flag2=1;
+					}
+					for(let i in that.obj){
+						if(i===letter){
+							that.dfmusic.play();
+							that.df++;
+							that.dfnum.innerHTML=that.df;
+							if(that.df%10==0){
+								that.gk++;
+								that.gknum.innerHTML=that.gk;
+								if(that.gk<=3){
+									that.creatLetter();
+								}
+								else{
+									that.sudu+=2;
+								}
+							}
+							that.cj.removeChild(that.obj[i].ele);
+							delete that.obj[i];
+							that.creatLetter();
+						}
+					}
+				}
+			}
+		}
+		new name();
+	</script>
+</html>

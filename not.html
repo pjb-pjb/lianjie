@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		.text{
+			width: 700px;
+			height: 300px;
+			margin: 20px auto 0;
+			position: relative;
+		}
+		#con{
+			border-radius: 5px;
+			box-sizing: border-box;
+			padding: 30px;
+			display: block;
+			margin: 0 auto;
+			width: 100%;
+			height: 100%;
+			outline: none;
+			resize: none;
+			font-size: 16px;
+		}
+		.number{
+			position: absolute;
+			right: 5px;
+			bottom: 5px;
+			color: darkgray;
+		}		
+		.btn{
+			width: 500px;
+			height: 100px;
+			margin: 0 auto;
+			text-align: center;
+			line-height: 100px;
+		}
+		input{
+			width: 80px;
+			height: 40px;
+			border: none;
+			outline: none;
+			background: blueviolet;
+			border-radius: 5px;
+			color: #000;
+			cursor: pointer;
+		}
+		#tanchu{
+			display: none;
+			height: 30px;
+			width: 200px;
+			text-align: center;
+			line-height: 30px;
+			background: green;
+			border-radius: 5px;
+			position: fixed;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			opacity: 0;
+		}
+		@keyframes danru{
+			0%{
+				opacity: 0;
+			}
+			50%{
+				opacity: 1;
+			}
+			100%{
+				opacity: 0;
+				display: none;
+			}
+		}
+		.danru{
+			animation: danru 2s linear;
+			display: block !important;
+		}
+		.text1{
+			width: 800px;
+			margin: 0 auto;
+			padding: 0 0 50px 0;
+			position:relative;
+		}
+		.text1 p{
+			/*height: 30px;*/
+			width: 100%;
+			border-bottom: 1px dotted #A9A9A9;
+			line-height: 30px;
+			color: goldenrod;
+			font-size: 16px;
+			padding: 0 10px;
+		}
+		.text1 p span{
+			position:relative;
+			float: right;
+			height: 30px;
+			line-height: 30px;
+			text-align: center;
+			color: #000;
+			margin-right: 50px;
+		}
+		.text1 p i{
+			float: right;
+			height: 30px;
+			line-height: 30px;
+			text-align: center;
+			padding: 0 5px;
+			color: red;
+			/*font-style: normal;*/
+			font-weight: bold;
+		}
+		.text1 p:hover{
+			background: greenyellow;
+			color:#000;
+			cursor: pointer;
+		}
+		.fanye{
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 200px;
+			height: 50px;
+			line-height: 50px;
+			color: red;
+		}
+	</style>
+	<body>
+		<div class="text">
+			<textarea id="con">请输入...</textarea>
+			<div class="number">
+				<span>0</span>/<span></span>
+			</div>
+		</div>
+		<div class="btn">
+			<input type="button" value="提交"/>
+		</div>
+		<div class="text1">
+		</div>
+		<!--<div class="fanye">
+			<span><向前</span><i>第<em class="oneof"></em>业</i><span>向后></span><b>共<em class="all"></em>业</b>
+		</div>-->
+		<dia id="tanchu">字数太多了，兄弟!</dia>
+	</body>
+	<script>
+		let con=document.querySelector("#con");
+		let conText=con.value;
+		let num=document.querySelectorAll(".number span");
+		let n=200;
+		let tanchu=document.querySelector("#tanchu");
+		let text1=document.querySelector(".text1");
+		let btn=document.querySelector(".btn input");
+		let arr=[];
+		num[1].innerHTML=n;
+		function getZero(time){
+			return time<10?"0"+time:time;
+		}
+		function convertDate(date){
+			let year=getZero(date.getFullYear());
+			let month=getZero(date.getMonth()+1);
+			let day=getZero(date.getDay());
+			let hour=getZero(date.getHours());
+			let minutes=getZero(date.getMinutes());
+			let second=getZero(date.getSeconds());
+			let time=year+"-"+month+"-"+day+"&nbsp&nbsp"+hour+":"+minutes+":"+second;
+			return time;
+		}
+		function tiJiao(){
+			num[0].innerHTML=0;
+			if(con.value==conText||con.value==""){
+				tanchu.innerHTML="不输入，你提交个屁啊！";
+				tanchu.classList.add("danru");
+				return;
+			}
+			let data=getData();
+			let date=new Date();
+			data.push({text:con.value,time:date.getTime()});
+			setDate(data);
+			render();
+			con.value="";
+		}
+		con.onfocus=function(){
+			if(con.value==conText){
+				con.value="";
+			}
+		}
+		con.onblur=function(){
+			if(con.value==""){
+				con.value=conText;
+			}
+		}
+		function fu(e){
+			let text=con.value;
+			let length=text.length;
+			num[0].innerHTML=length;
+			if(length>n){
+				con.value=text.slice(0,n);
+				tanchu.innerHTML="字数太多了，兄弟!";
+				num[0].style.color="red";
+				length=n;
+				tanchu.classList.add("danru");
+			}
+			else{
+				num[0].style.color="";
+			}
+		}
+		tanchu.addEventListener("animationend",function(){
+			tanchu.classList.remove("danru");
+		});
+		con.onkeydown=fu;
+		con.onkeyup=fu;
+		con.addEventListener("keydown",function(e){
+			if(e.keyCode===13&&e.ctrlKey===true){
+				tiJiao();
+			}
+		});
+		btn.onclick=function(){
+			con.focus();
+			tiJiao();
+			con.blur();
+		}
+		function getData(){
+			return localStorage.messages?JSON.parse(localStorage.messages):[];
+		}
+		function setDate(data){
+			localStorage.messages=JSON.stringify(data);
+		}
+		function render(){
+			let str="";
+			let data=getData();
+			data.forEach((val,index)=>{
+				let date=new Date();
+				date.setTime(val.time);
+				str+=`<p id=${index}>${val.text}<i onclick="del(this)">删除</i><span>${convertDate(date)}</span></p>`;
+			});
+			text1.innerHTML=str;
+		}
+		text1.onclick=function(event){
+			let target=event.target;
+			if(target.nodeName=="I"){
+				if(confirm("你确定要删除吗？")){
+					let data=getData();
+					let n=target.parentNode.id;
+					data.splice(n,1);
+					setDate(data);
+					render();
+				}
+			}
+		}
+		render();
+	</script>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			height: 100%;
+		}
+		a{
+			text-decoration: none;
+			color: #fff;
+			font-size: 20px;
+		}
+		ul{
+			margin-left: 10px;
+			list-style: none;
+			width: 120px;
+			height: auto;
+			position: fixed;
+			left:0;
+			top: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			align-items: center;
+		}
+		li{
+			text-align: center;
+			width: 100%;
+			padding: 5px;
+			margin-top: 10px;
+			background: blueviolet;
+			border-radius: 3px;
+		}
+		iframe{
+			width: 100%;
+			border: none;
+			height: 100%;
+		}
+		.close{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 22px;
+			width: 30px;
+			font-weight: bold;
+			height: 30px;
+			position: absolute;
+			top: 10px;
+			/*right: 0;*/
+			transform: translateX(140px);
+			color: #fff;
+			background: red;
+			border-radius: 50%;
+			z-index: 999;
+			cursor: pointer;
+			transition: background-color .5s;
+		}
+		.close:hover{
+			background: blue;
+		}
+	</style>
+	<body>
+		<div class="close">×</div>
+		<ul class="menu">
+			<li><a href="typingGame.html" target="box">打字游戏</a></li>
+			<li><a href="drawBoard.html" target="box">画板</a></li>
+			<li><a href="https://pjb-pjb.github.io/toDoList/" target="box">toDoList</a></li>
+			<li><a href="userMag.html" target="box">用户管理</a></li>
+			<li><a href="cookie.html" target="box">cookie练习</a></li>
+			<li><a href="not.html" target="box">记事本</a></li>
+		</ul>
+		<iframe name="box"></iframe>
+	</body>
+	<script>
+		let close=document.querySelector(".close");
+		let ul=document.querySelector(".menu");
+		let n=true;
+		close.onclick=function(){
+			if(n){
+				ul.style.display="none";
+				close.style.transform="translateX(0px)";
+				close.innerHTML=">";
+			}else{
+				ul.style.display="block";
+				close.style.transform="translateX(145px)";
+				close.innerHTML="×";
+			}
+			n=!n;
+		}
+	</script>
+</html>

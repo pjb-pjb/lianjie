@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		
+		#text{
+			color: #000;
+			font-size: 12px;
+			width: 800px;
+			height: 500px;
+			margin: 0 auto;
+			border: 1px solid black;
+			padding: 20px;
+			text-indent: 2em;
+		}
+		.sezi{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 800px;
+			height: 50px;
+			margin: 0 auto;
+		}
+	</style>
+	<body>
+		<div class="sezi">
+			<label>
+				文字大小：<input type="number" min="12" max="18" value="12" id="fontsize" step="2"/>
+			</label>
+			<label>
+			字体样式：<select id="fontfamily">
+						<option value="微软雅黑" selected="">微软雅黑</option>
+						<option value="宋体">宋体</option>
+						<option value="楷体">楷体</option>
+					</select>
+			</label>
+			<label>
+				颜色：<input type="color" value="#000" id="color" />
+			</label>
+		</div>
+		<div id=text> 
+			ad那书记对你撒娇的拿开了三年大老师都拿上来的那达拉斯的那是领导那斯柯达那三大萨达拿到了扩大懒得卡来的那老师看到你都能马上来看待那算了卡迪那来到纳斯达克东南角阿森纳的看见爱上的那圣诞快乐纳斯达克上来的那达拉斯的那是领导那斯柯达那三大萨达拿到了扩大懒得卡来的那老师看到你都能马上来看待那算了卡迪那来到纳斯达克东南角阿森纳的看见爱上的那圣诞快乐纳斯达克
+		</div>
+	</body>
+	<script type="text/javascript" src="js/cookie.js" ></script>
+	<script>
+		let fontsize=document.querySelector("#fontsize");
+		let fontfamily=document.querySelector("#fontfamily");
+		let color=document.querySelector("#color");
+		let text=document.querySelector("#text");
+		fontsize.onchange=function(){
+			text.style.fontSize=this.value+"px";
+			setCookie("fontsize",this.value,100000);
+		}
+		fontfamily.onchange=function(){
+			text.style.fontFamily=this.value;
+			setCookie("fontfamily",escape(this.value),100000);
+			console.log(this.value);
+		}
+		color.onchange=function(){
+			text.style.color=this.value;
+			setCookie("color",this.value,100000);
+			console.log(this.value);
+		}
+		text.style.fontSize=getCookie("fontsize")+"px";
+		fontsize.value=getCookie("fontsize");
+		text.style.fontFamily=unescape(getCookie("fontfamily"));
+		fontfamily.value=unescape(getCookie("fontfamily"));
+		text.style.color=getCookie("color");
+		color.value=getCookie("color");	
+	</script>
+</html>

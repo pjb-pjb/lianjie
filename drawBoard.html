@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+			-webkit-user-select: none;
+		}
+		.menu{
+			position: absolute;
+			top: 0px;
+			left:0px;
+			width: 300px;
+			height: 100%;
+			border: 1px solid black;
+			box-sizing: border-box;
+		}
+		label{
+			display: block;
+			width: 100%;
+			height: 70px;
+			text-align: center;
+			color: #000;
+			border-bottom: 1px dotted #ccc;
+		}
+		label span{
+			display: block;
+			width: 100%;
+			height: 30px;
+			line-height: 30px;
+		}
+		#save,#recall,#clear{
+			display: inline-block;
+			outline: none;
+			background: #ccc;
+			width: 90px;
+			height: 40px;
+			font-size: 18px;
+			font-weight: bold;
+			color:#f66;
+			border:none;
+			cursor: pointer;
+			margin-top: 15px;
+			line-height: 40px;
+			position: relative;
+		}
+		#clear:active,#save:active,#recall:active{
+			box-shadow: 0 0 2px 1px #000000 inset;
+		}
+		#shap{
+			width: 100px;
+			height: 30px;
+			color: #f66;
+			font-size: 16px;
+			letter-spacing: 2px;
+			background: #fffccc;
+			border: 1px solid #000;
+		}
+		.side{
+			display: none;
+		}
+		#link{
+			top: 0;
+			left: 0;
+			/*z-index: -1;*/
+			/*background: #fff;*/
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+		}
+	</style>
+	<body>
+		<div class="menu">
+			<label>
+				<span>工具</span>
+				<select id="shap">
+					<option value="rect" selected>矩形</option>
+					<option value="line">线条</option>
+					<option value="round">圆形</option>
+					<option value="polygon">多边形</option>
+					<option value="drawPen">画笔</option>
+				</select>
+			</label>
+			<label class="side">
+				<span>边数</span>
+				<input type="number" min="3" step="1" value="3" id="number"/>
+			</label>
+			<label>
+				<span>方式</span>
+				描边：<input type="radio" name="type" value="stroke" checked=""/>
+				填充：<input type="radio" name="type" value="fill"/>
+			</label>
+			<label>
+				<span>宽度</span>
+				<input type="range" min="2" max="10" step="1" id="width" value="2"/>
+			</label>
+			<label>
+				<span>颜色</span>
+				<input type="color" id="color"/>
+			</label>
+			<label>
+				<button id="recall">撤回</button>
+			</label>
+			<label>
+				<button id="clear">清空</button>
+			</label>
+			<label>
+				<div id="save">保存<a href="javascript:" id="link"></a></div>
+			</label>
+		</div>
+		<canvas height="600" width="600" style="background:#ccc;display: block;margin: 0 auto;cursor: pointer;"></canvas>
+	</body>
+	<script src="js/draw.js"></script>
+	<script>
+		let shapeObj=document.querySelector("#shap");
+		let colorObj=document.querySelector("#color");
+		let widthObj=document.querySelector("#width");
+		let side=document.querySelector(".side");
+		let typeObj=document.querySelectorAll("[name='type']");
+		let canvas=document.querySelector("canvas");
+		let clear=document.querySelector("#clear");
+		let ctx=canvas.getContext("2d");
+		let imageData=[ctx.getImageData(0,0,600,600)];
+		let imageData1=[];
+		let imageData2=ctx.getImageData(0,0,600,600);
+		let shape="rect";
+		let color="#000";
+		let width=2;
+		let type="stroke";
+		let flag=0;
+		let flag2=0;
+		//设置数组
+		function setArr(mode,flag1){
+			if(!flag1){
+				flag=1;
+				clear.style.background="rgb(0,128,196)";
+			}
+			if(imageData.length==21){
+				flag2=1;
+				imageData.shift();
+			}
+			if(mode==0){
+				imageData.push(ctx.getImageData(0,0,600,600));
+			}
+			if(mode==1){
+				imageData.pop();
+			}
+			if(imageData.length>1){
+				recall.style.background="rgb(0,128,196)";
+			}else{
+				if(flag2==0){
+					clear.style.background="";
+					flag=0;
+				}
+				recall.style.background="";
+			}
+		}
+		//测回操作
+		let recall=document.querySelector("#recall");
+		window.onkeydown=recall.onclick=function(e){
+			if(e.type==="keydown"){
+				if(e.ctrlKey&&e.keyCode==89){
+					if(imageData1.length===0){
+						return;
+					}
+					ctx.putImageData(imageData1[imageData1.length-1],0,0);
+					imageData1.pop();
+					setArr(0);
+					return;
+				}
+				if(!(e.ctrlKey&&e.keyCode==90)){
+					return;
+				}
+			}
+			if(imageData.length==1){
+				return;
+			}
+			imageData1.push(imageData[imageData.length-1]);
+			setArr(1);
+			ctx.putImageData(imageData[imageData.length-1],0,0);
+		}
+		//清空画布
+		clear.onclick=function(){
+			if(flag===1){
+				clear.style.background="#CCCCCC";
+				ctx.clearRect(0,0,600,600);
+				setArr(0,1);
+				flag=0;
+			}
+		}
+		//判断绘制的方式
+		typeObj.forEach(function(val,index){
+			val.onclick=function(){
+				type=this.value;
+			}
+		});
+		//判断形状
+		shapeObj.onchange=function(){
+			shape=this.value;
+			if(shape==="polygon"){
+				side.style.display="block";
+			}
+			else{
+				side.style.display="none";
+			}
+		}
+		//判断多边形的边数
+		let numberObj=document.querySelector("#number");
+		let number=3;
+		numberObj.onchange=function(){
+			number=this.value;
+			console.log(number);
+		}
+		//判断颜色的改变
+		colorObj.onchange=function(){
+			color=this.value;
+		}
+		widthObj.onchange=function(){
+			width=this.value;
+		}
+		canvas.onmousedown=function(e){
+			let drawObj=new draw(ctx,{type,shape,color,width,size:number});
+			let x1=e.offsetX;
+			let y1=e.offsetY;
+			let [x3,y3]=[x1,y1]
+			canvas.onmousemove=(e)=>{
+				let x2=e.offsetX;
+				let y2=e.offsetY;
+				if(shape!="drawPen"){
+					ctx.clearRect(0,0,600,600);
+					ctx.putImageData(imageData[imageData.length-1],0,0);
+				}
+				drawObj[shape](x1,y1,x2,y2,x3,y3);
+				if(shape=="drawPen"){
+					x3=x2;
+					y3=y2;
+				}
+			}
+			window.onmouseup=function(){
+				setArr(0);
+				canvas.onmousemove=null;
+				window.onmouseup=null;
+				save.style.background="rgb(0,128,196)";
+			}
+		}
+		//保存图片
+		let save=document.querySelector("#save");
+		let link=document.querySelector("#link");
+		let saveImgInfo;
+		save.addEventListener("click",function(event){
+			if(!(getComputedStyle(save).backgroundColor=="rgb(0, 128, 196)")){
+				return;
+			}
+			saveImgInfo=canvas.toDataURL();
+			link.href=saveImgInfo;	
+		},true);
+		link.addEventListener("click",function(){
+			if(!(getComputedStyle(save).backgroundColor=="rgb(0, 128, 196)")){
+				return;
+			}
+			link.download="demo";
+		},true)
+	</script>
+</html>
